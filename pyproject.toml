@@ -5,6 +5,8 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "datasette>=1.0a17",
+    "datasette-cors>=1.0.1",
     "github-to-sqlite>=2.9",
     "llm>=0.21",
 ]

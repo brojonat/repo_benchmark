@@ -4,10 +4,45 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Plot for {{ slug }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body>
-    <p>Hi there {{ slug }}!</p>
-    <div id="myplot"></div>
+  <body class="bg-slate-50 flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-4xl bg-white p-8 sm:p-12 rounded-lg shadow-lg">
+      <h1 class="text-3xl font-bold text-slate-800 mb-4">
+        Hi there {{ slug }}!
+      </h1>
+      <div class="prose max-w-none">
+        <p class="mb-4">
+          This page demonstrates how to implement a custom page in Datasette.
+          Note that you can pass URL path parameters into the actual template
+          like we've done here with "{{ slug }}".
+        </p>
+        <p class="mb-4">
+          The plot below is generated using the
+          <a
+            href="https://observablehq.com/@observablehq/plot"
+            class="text-blue-600 hover:underline"
+            >Plot library</a
+          >.
+        </p>
+        <p class="mb-4">
+          If you want, you can implement your own custom page in a similar
+          manner.
+        </p>
+        <p class="mb-4">
+          This can be particularly useful if you want to implement a custom page
+          that is not based on just a single table, because you can still access
+          the database by making fetch calls against the Datasette API routes!
+          So, you could imagine building a custom page that functions like a
+          dashboard of sorts, that shows a number of different charts and
+          tables, that business stakeholders have requested.
+        </p>
+      </div>
+      <div
+        id="myplot"
+        class="mt-8 p-4 border border-slate-200 rounded-md"
+      ></div>
+    </div>
 
     <script type="module" src="/assets/repo-plot.js"></script>
   </body>

@@ -14,7 +14,7 @@ databases:
       stars:
         sql: |-
           SELECT
-            size, stargazers_count
+            full_name, size, stargazers_count
           FROM
             repos
         title: Repo Star Count vs Repo Size

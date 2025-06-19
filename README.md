@@ -33,7 +33,13 @@ The main entry point is the `repo-benchmark` CLI (`rb.py`).
 You can use `datasette` to view the surveyed repositories by running the following command:
 
 ```bash
-datasette serve --config datasette.yaml --template-dir templates --static assets:static github.db
+uv run datasette serve --config datasette.yaml --template-dir templates --static assets:static github.db
 ```
 
-This will serve a regular datasette instance that you can view in your browser; note that the templates and static files are responsible for customizing the visualization of the data.
+This will serve a regular datasette instance that you can view in your browser.
+Once running, you can:
+
+- Navigate to `/github/repos` to see the customized visualization for the surveyed repositories.
+- Navigate to `/-/pages/custom/your-slug-here` to see an example of a custom page. For example, try `/-/pages/custom/example`.
+
+Note that the templates and static files are responsible for customizing the visualization of the data.

@@ -10,5 +10,4 @@ wheels/
 .venv
 auth.json
 data/
-github.db
 todo.txt

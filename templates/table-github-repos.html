@@ -1,6 +1,75 @@
 {% extends "default:table.html" %} {% block content %}
+<style>
+  .range-controls {
+    margin: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial,
+      sans-serif;
+  }
+
+  .range-group {
+    margin-bottom: 15px;
+  }
+
+  .range-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 500;
+  }
+
+  .range-group input[type="number"] {
+    width: 120px;
+    padding: 8px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin: 0 8px;
+  }
+
+  .range-group input[type="number"]:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+  }
+
+  .range-group input[type="number"]:hover {
+    border-color: #bdbdbd;
+  }
+
+  .range-group span {
+    color: #666;
+    margin: 0 8px;
+  }
+
+  /* Remove spinner buttons from number inputs */
+  .range-group input[type="number"]::-webkit-inner-spin-button,
+  .range-group input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .range-group input[type="number"] {
+    -moz-appearance: textfield;
+  }
+</style>
+
 <!-- Create a div where the graph will take place -->
 <div id="myplot"></div>
+<div class="range-controls">
+  <div class="range-group">
+    <label>Size range (KB):</label>
+    <input type="number" id="sizeMin" placeholder="Min" min="0" />
+    <span>to</span>
+    <input type="number" id="sizeMax" placeholder="Max" min="0" />
+  </div>
+  <div class="range-group">
+    <label>Stars range:</label>
+    <input type="number" id="starsMin" placeholder="Min" min="0" />
+    <span>to</span>
+    <input type="number" id="starsMax" placeholder="Max" min="0" />
+  </div>
+</div>
 {{ super() }}
 <script type="module">
   (async () => {
@@ -26,30 +95,105 @@
       console.error(data);
       return;
     }
-    console.log(res);
 
     const data = await res.json();
     const rows = data.rows.map((d) => ({
+      full_name: d.full_name,
       size: d.size,
       stars: d.stargazers_count,
+      url: `https://github.com/${d.full_name}`,
     }));
-    const plot = Plot.plot({
-      marginBottom: 50,
-      x: {
-        label: "Size of repository",
-        type: "log",
-        grid: true,
-      },
-      y: {
-        label: "Number of stars",
-        type: "log",
-        grid: true,
-      },
-      marks: [Plot.dot(rows, { x: "size", y: "stars" }), Plot.ruleY([0])],
-    });
 
-    const div = document.querySelector("#myplot");
-    div.append(plot);
+    const maxSize = Math.max(...rows.map((d) => d.size));
+    const maxStars = Math.max(...rows.map((d) => d.stars));
+
+    // Set initial max values
+    document.getElementById("sizeMax").value = maxSize;
+    document.getElementById("sizeMin").value = 1;
+    document.getElementById("starsMax").value = maxStars;
+    document.getElementById("starsMin").value = 1;
+
+    function createPlot(sizeMin, sizeMax, starsMin, starsMax) {
+      const filteredRows = rows.filter(
+        (d) =>
+          d.size >= sizeMin &&
+          d.size <= sizeMax &&
+          d.stars >= starsMin &&
+          d.stars <= starsMax
+      );
+
+      const plot = Plot.plot({
+        marginBottom: 50,
+        x: {
+          label: "Size of repository",
+          type: "log",
+          grid: true,
+          domain: [sizeMin, sizeMax],
+        },
+        y: {
+          label: "Number of stars",
+          type: "log",
+          grid: true,
+          domain: [starsMin, starsMax],
+        },
+        marks: [
+          Plot.dot(filteredRows, { x: "size", y: "stars" }),
+          Plot.dot(
+            filteredRows,
+            Plot.pointer({ x: "size", y: "stars", fill: "red", r: 5 })
+          ),
+          Plot.tip(
+            filteredRows,
+            Plot.pointer({
+              x: "size",
+              y: "stars",
+              title: (d) =>
+                `${d.full_name}\n${d.size.toLocaleString()} KB)\n${
+                  d.stars
+                } stars`,
+              fill: "white",
+            })
+          ),
+        ],
+      });
+
+      const div = document.querySelector("#myplot");
+      div.innerHTML = ""; // Clear previous plot
+      div.append(plot);
+
+      // Add click handler to points
+      plot.addEventListener("click", (event) => {
+        try {
+          window.open(event.srcElement.value.url, "_blank");
+        } catch (error) {}
+      });
+    }
+
+    // Initial plot
+    createPlot(1, maxSize, 1, maxStars);
+
+    // Function to update plot based on current input values
+    function updatePlot() {
+      const sizeMin = Math.max(
+        1,
+        parseInt(document.getElementById("sizeMin").value) || 1
+      );
+      const sizeMax =
+        parseInt(document.getElementById("sizeMax").value) || maxSize;
+      const starsMin = Math.max(
+        1,
+        parseInt(document.getElementById("starsMin").value) || 1
+      );
+      const starsMax =
+        parseInt(document.getElementById("starsMax").value) || maxStars;
+
+      createPlot(sizeMin, sizeMax, starsMin, starsMax);
+    }
+
+    // Add event listeners to inputs
+    ["sizeMin", "sizeMax", "starsMin", "starsMax"].forEach((id) => {
+      document.getElementById(id).addEventListener("change", updatePlot);
+    });
   })();
 </script>
 {% endblock %}

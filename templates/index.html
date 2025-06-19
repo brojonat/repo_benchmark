@@ -1,0 +1,51 @@
+{% extends "default:index.html" %} {% block content %} {{ super() }}
+
+<div
+  style="
+    margin-top: 2em;
+    border: 1px solid #e2e8f0;
+    padding: 1.5em;
+    border-radius: 8px;
+    background-color: #f8fafc;
+  "
+>
+  <h2
+    style="
+      font-size: 1.5em;
+      margin-top: 0;
+      margin-bottom: 0.75em;
+      color: #1e293b;
+    "
+  >
+    Quick Navigation
+  </h2>
+  <p style="margin-bottom: 1em; color: #475569">
+    Welcome! Here are some interesting pages to explore in this Datasette
+    instance:
+  </p>
+  <ul style="list-style-type: none; padding-left: 0">
+    <li style="margin-bottom: 0.5em">
+      <a
+        href="/github/repos"
+        style="color: #2563eb; text-decoration: none; font-weight: 500"
+      >
+        📊 &nbsp; Surveyed Repositories Visualization
+      </a>
+      <p style="margin: 0.25em 0 0 1.75em; font-size: 0.9em; color: #64748b">
+        A custom view of the surveyed repositories.
+      </p>
+    </li>
+    <li style="margin-bottom: 0.5em">
+      <a
+        href="/custom/foo123"
+        style="color: #2563eb; text-decoration: none; font-weight: 500"
+      >
+        📈 &nbsp; Custom Interactive Plot Page
+      </a>
+      <p style="margin: 0.25em 0 0 1.75em; font-size: 0.9em; color: #64748b">
+        An example of a custom page using Observable Plot and Tailwind CSS.
+      </p>
+    </li>
+  </ul>
+</div>
+{% endblock %}
