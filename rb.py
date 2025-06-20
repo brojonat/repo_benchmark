@@ -1,12 +1,11 @@
-#!/usr/bin/env -S uv run --script
 import json
+import os
 import re
+import subprocess
+import tempfile
+from typing import Optional
 
 import click
-import os
-from typing import Optional
-import tempfile
-import subprocess
 
 
 @click.group()
