@@ -52,3 +52,59 @@ Once running, you can:
 - Navigate to `/pages/custom/your-slug-here` to see an example of a custom page. For example, try `/pages/custom/example`.
 
 The templates and static files are responsible for customizing the visualization of the data; this demonstrates how you can extend existing datasette pages, or add altogether new pages.
+
+### Interacting with Datasette via the CLI
+
+The `rb` tool includes a `datasette` command group for interacting with a running Datasette instance's [JSON Write API](https://docs.datasette.io/en/latest/json_api.html#the-json-write-api). This allows for programmatic creation and modification of data.
+
+**Configuration**
+
+Before using these commands, you'll need to configure your environment. Copy the `.env.example` file to `.env` and fill in the required values:
+
+```bash
+cp .env.example .env
+```
+
+You will need to set:
+
+- `DATASETTE_ENDPOINT`: The base URL of your Datasette instance (e.g., `http://127.0.0.1:8001`).
+- `DATASETTE_AUTH_TOKEN`: An API token with appropriate permissions.
+
+You can generate a transient token for a user by setting `DATASETTE_USERNAME` and `DATASETTE_SECRET` in your `.env` file and running:
+
+```bash
+rb datasette get-auth-token
+```
+
+For a persistent API token suitable for scripts, it's recommended to use the `datasette-auth-tokens` plugin.
+
+**Example: Creating a Table**
+
+You can create a new table by providing a JSON file that defines its schema.
+
+First, create a JSON file (e.g., `payload.json`):
+
+```json
+{
+  "table": "my_new_table",
+  "columns": [
+    {
+      "name": "id",
+      "type": "integer"
+    },
+    {
+      "name": "name",
+      "type": "text"
+    }
+  ],
+  "pk": "id"
+}
+```
+
+Then, run the `create-table` command:
+
+```bash
+rb datasette create-table --database github --payload-file payload.json
+```
+
+For more details on each command and the expected payload structures, run the command with the `--help` flag, for example: `rb datasette insert-rows --help`.
