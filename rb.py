@@ -32,7 +32,7 @@ def datasette():
     default=os.getenv("DATASETTE_SECRET"),
 )
 def get_auth_token(username: str, secret: str):
-    """Get the Datasette auth token."""
+    """Get a Datasette auth token."""
     result = subprocess.run(
         ["uv", "run", "datasette", "create-token", username, "--secret", secret],
         check=True,
